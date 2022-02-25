@@ -14,8 +14,18 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   bool isAuth=(FirebaseAuth.instance.currentUser!=null);
+
+  print(FirebaseAuth.instance.currentUser);
+  print(isAuth);
   runApp( MyApp(isAuth:isAuth));
 }
 
+void prompt(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
 
 

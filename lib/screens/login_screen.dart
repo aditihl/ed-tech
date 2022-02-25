@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edvance/screens/home_screen.dart';
-import 'package:edvance/screens/role_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -19,59 +18,38 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(
-            child: SignInButton(
-              Buttons.Google,
-              onPressed: () async {
-
-              },
-            ),
-          ),
-        ],
+      body: SignInButton(
+        Buttons.Google,
+        onPressed: () async {
+          UserCredential user = await signInWithGoogle();
+          if (user.user != null) {
+            DocumentSnapshot documentSnapshot=await FirebaseFirestore.instance
+                .collection("users").doc(user.user!.uid).get().catchError((onError){});
+            print(documentSnapshot);
+            dynamic col = FirebaseFirestore.instance
+                .collection("users")
+                .snapshots()
+                .listen((event) {
+              List<QueryDocumentSnapshot> q= event.docs.where(
+                  (element) => element.data()['id'] == user.user!.uid).toList();
+              if(q.isNotEmpty) {
+                QueryDocumentSnapshot query=q[0];
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder:(buil)=> HomeScreen()), (route) => false);
+            }else{
+                FirebaseFirestore.instance
+                    .collection("users")
+                    .add({
+                  'name': user.user!.displayName, // John Doe
+                  'id': user.user!.uid, // Stokes and Sons
+                  'email': user.user!.email, // 42
+                });
+                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder:(buil)=> HomeScreen()), (route) => false);
+              }
+            });
+          }
+        },
       ),
     );
-  }
-
-  loginScreen()  async {
-    UserCredential user = await signInWithGoogle();
-    if (user.user != null) {
-      FirebaseFirestore.instance
-          .collection("users")
-          .snapshots()
-          .listen((event) {
-        List<QueryDocumentSnapshot> q = event.docs
-            .where(
-                (element) => element.data()['id'] == user.user!.uid)
-            .toList();
-        if (q.isNotEmpty) {
-          QueryDocumentSnapshot query = q[0];
-
-          Map<dynamic, dynamic>? mapData = query.data() as Map?;
-          if (mapData!=null && mapData.containsKey("role") &&
-              mapData['role'] != null) {
-            redirectToHomeScreen();
-          } else {
-            redirectToRoleScreen();
-          }
-        } else {
-          redirectToRoleScreen();
-        }
-      });
-    }
-  }
-
-  redirectToRoleScreen() {
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (buil) => RoleScreen()), (route) => false);
-  }
-
-  void redirectToHomeScreen() {
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (buil) => HomeScreen()), (route) => false);
   }
 
   Future<UserCredential> signInWithGoogle() async {
