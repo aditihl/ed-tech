@@ -27,37 +27,41 @@ class _LoginScreenState extends State<LoginScreen> {
             child: SignInButton(
               Buttons.Google,
               onPressed: () async {
-                UserCredential user = await signInWithGoogle();
-                if (user.user != null) {
-                  FirebaseFirestore.instance
-                      .collection("users")
-                      .snapshots()
-                      .listen((event) {
-                    List<QueryDocumentSnapshot> q = event.docs
-                        .where(
-                            (element) => element.data()['id'] == user.user!.uid)
-                        .toList();
-                    if (q.isNotEmpty) {
-                      QueryDocumentSnapshot query = q[0];
 
-                      Map<dynamic, dynamic>? mapData = query.data() as Map?;
-                      if (mapData!=null && mapData.containsKey("role") &&
-                          mapData['role'] != null) {
-                        redirectToHomeScreen();
-                      } else {
-                        redirectToRoleScreen();
-                      }
-                    } else {
-                      redirectToRoleScreen();
-                    }
-                  });
-                }
               },
             ),
           ),
         ],
       ),
     );
+  }
+
+  loginScreen()  async {
+    UserCredential user = await signInWithGoogle();
+    if (user.user != null) {
+      FirebaseFirestore.instance
+          .collection("users")
+          .snapshots()
+          .listen((event) {
+        List<QueryDocumentSnapshot> q = event.docs
+            .where(
+                (element) => element.data()['id'] == user.user!.uid)
+            .toList();
+        if (q.isNotEmpty) {
+          QueryDocumentSnapshot query = q[0];
+
+          Map<dynamic, dynamic>? mapData = query.data() as Map?;
+          if (mapData!=null && mapData.containsKey("role") &&
+              mapData['role'] != null) {
+            redirectToHomeScreen();
+          } else {
+            redirectToRoleScreen();
+          }
+        } else {
+          redirectToRoleScreen();
+        }
+      });
+    }
   }
 
   redirectToRoleScreen() {

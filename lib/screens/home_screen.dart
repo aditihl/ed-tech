@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edvance/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:edvance/event_info.dart';
+import 'package:googleapis/classroom/v1.dart';
 import "package:googleapis_auth/auth_io.dart";
 import 'package:googleapis/calendar/v3.dart';
 import 'package:edvance/calendar_client.dart';
@@ -55,6 +56,52 @@ class _HomeScreenState extends State<HomeScreen> {
     ),),);
   }
 
+  Future<Map<String, String>> insertClassRoom({
+    required String title,
+    required String description,
+    required DateTime startTime,
+    required DateTime endTime
+    // List<EventAttendee> attendeeEmailList,
+
+  }) async {
+    Map<String, String> cousre={};
+
+    // If the account has multiple calendars, then select the "primary" one
+
+    try {
+
+      var _clientID =  ClientId(Secret.getId(), "");
+      const _scopes = [ClassroomApi.classroomCoursesScope];
+
+      await clientViaUserConsent(_clientID, _scopes, prompt).then((AuthClient client) async {
+        ClassroomApi calendarApi  = ClassroomApi(client);
+        await calendarApi.courses.create(Course())
+            .then((value) {
+
+          // print("Event Status: ${value.status}");
+          // if (value.status == "confirmed") {
+          //   String  joiningLink = "https://meet.google.com/${value.conferenceData?.conferenceId}";
+          //   String eventId;
+          //   eventId = value.id!;
+          //
+          //   eventData = {'id': eventId, 'link': joiningLink};
+          //   print('Event added to Google Calendar');
+          // } else {
+          //   print("Unable to add event to Google Calendar");
+          // }
+        });
+      });
+
+      // final calendarApi=CalendarApi(httpClient);
+      // final googleAPI.CalendarApi calendarAPI = googleAPI.CalendarApi(httpClient);
+
+    } catch (e) {
+      print('Error creating event $e');
+    }
+
+    return cousre;
+  }
+
   Future<Map<String, String>> insert({
     required String title,
     required String description,
@@ -96,8 +143,10 @@ class _HomeScreenState extends State<HomeScreen> {
     event.end = end;
 
     try {
+
       var _clientID =  ClientId(Secret.getId(), "");
-  const _scopes = [CalendarApi.calendarScope];
+      const _scopes = [CalendarApi.calendarScope];
+      
   await clientViaUserConsent(_clientID, _scopes, prompt).then((AuthClient client) async {
     CalendarApi calendarApi  = CalendarApi(client);
     await calendarApi.events
