@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "358527879598",
+    "project_id": "edvance-7a810",
+    "storage_bucket": "edvance-7a810.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358527879598:android:ad1d79c1737060cac2a03f",
+        "android_client_info": {
+          "package_name": "com.edvance.edvance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "358527879598-46ap9v8r0q00910l8fucknoniq6g4tjd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKwfzsBNdAJjWz7AoJQTpVz77LzRbKMxc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "358527879598-46ap9v8r0q00910l8fucknoniq6g4tjd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
