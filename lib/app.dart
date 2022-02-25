@@ -11,16 +11,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    GoogleSignInAccount? user=GoogleSignIn().currentUser;
+   User? user= FirebaseAuth.instance.currentUser;
     isAuth =user !=null;
-    // !isAuth ?const LoginScreen():
-    print(' user Auth $isAuth');
+    print(' user Auth $user $isAuth');
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home:isAuth?const LoginScreen():const HomeScreen(),
+      home:!isAuth?const LoginScreen():const HomeScreen(),
     );
   }
 }
