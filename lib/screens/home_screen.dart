@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required String description,
     required DateTime startTime,
     required DateTime endTime
-     // List<EventAttendee> attendeeEmailList,
+    // List<EventAttendee> attendeeEmailList,
 
   }) async {
 
@@ -130,30 +130,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
       var _clientID =  ClientId(Secret.getId(), "");
       const _scopes = [CalendarApi.calendarScope];
-      
-  await clientViaUserConsent(_clientID, _scopes, prompt).then((AuthClient client) async {
-    CalendarApi calendarApi  = CalendarApi(client);
-    await calendarApi.events
-          .insert(event, calendarId,
-          conferenceDataVersion: 1, sendUpdates: "all")
-          .then((value) {
-        print("Event Status: ${value.status}");
-        if (value.status == "confirmed") {
-          String  joiningLink = "https://meet.google.com/${value.conferenceData?.conferenceId}";
-          String eventId;
-          eventId = value.id!;
 
-          eventData = {'id': eventId, 'link': joiningLink};
-          print('Event added to Google Calendar');
-        } else {
-          print("Unable to add event to Google Calendar");
-        }
+      await clientViaUserConsent(_clientID, _scopes, prompt).then((AuthClient client) async {
+        CalendarApi calendarApi  = CalendarApi(client);
+        await calendarApi.events
+            .insert(event, calendarId,
+            conferenceDataVersion: 1, sendUpdates: "all")
+            .then((value) {
+          print("Event Status: ${value.status}");
+          if (value.status == "confirmed") {
+            String  joiningLink = "https://meet.google.com/${value.conferenceData?.conferenceId}";
+            String eventId;
+            eventId = value.id!;
+
+            eventData = {'id': eventId, 'link': joiningLink};
+            print('Event added to Google Calendar');
+          } else {
+            print("Unable to add event to Google Calendar");
+          }
+        });
       });
-  });
-      
+
       // final calendarApi=CalendarApi(httpClient);
       // final googleAPI.CalendarApi calendarAPI = googleAPI.CalendarApi(httpClient);
-      
+
     } catch (e) {
       print('Error creating event $e');
     }

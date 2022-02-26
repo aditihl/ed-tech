@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edvance/screens/create_class.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:googleapis/classroom/v1.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TeacherHome extends StatefulWidget {
   const TeacherHome({Key? key}) : super(key: key);
@@ -10,6 +13,36 @@ class TeacherHome extends StatefulWidget {
 }
 
 class _TeacherHomeState extends State<TeacherHome> {
+  List<Course> course = [];
+
+  @override
+  void initState() {
+    getClassList();
+    super.initState();
+  }
+
+  getClassList() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn(
+      scopes: [
+        ClassroomApi.classroomCoursesScope,
+        ClassroomApi.classroomCoursesReadonlyScope,
+        ClassroomApi.classroomRostersScope,
+        ClassroomApi.classroomRostersReadonlyScope,
+      ],
+    ).signIn();
+    final GoogleAPIClient httpClient =
+        GoogleAPIClient(await googleUser!.authHeaders);
+
+    ClassroomApi calendarApi = ClassroomApi(httpClient);
+    print("Aditi");
+    calendarApi.courses.list().then((value) {
+      course = value.courses!;
+      setState(() {});
+      print(value);
+      print(value.courses);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -43,7 +76,7 @@ class _TeacherHomeState extends State<TeacherHome> {
                     topRight: Radius.circular(30)),
               ),
               child: ListView(
-                children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                children: course.map((Course document) {
                   return snapshotList(document);
                 }).toList(),
               ),
@@ -53,7 +86,8 @@ class _TeacherHomeState extends State<TeacherHome> {
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (builder)=> CreateClass()));
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (builder) => CreateClass()));
           },
           backgroundColor: Theme.of(context).primaryColor,
         ),
@@ -61,7 +95,8 @@ class _TeacherHomeState extends State<TeacherHome> {
     );
   }
 
-  Widget snapshotList(document) {
+  Widget snapshotList(Course document) {
+    print(document.alternateLink);
     return Container(
       margin: EdgeInsets.all(20),
       padding: EdgeInsets.all(20),
@@ -73,18 +108,67 @@ class _TeacherHomeState extends State<TeacherHome> {
             bottomLeft: Radius.circular(30),
             bottomRight: Radius.circular(10)),
       ),
-      child: const Text(
-        'Maths Class',
-        style: TextStyle(
-          fontFamily: 'Apple SD Gothic Neo',
-          fontSize: 23,
-          color: Color(0xffffffff),
-          fontWeight: FontWeight.w500,
-          height: 1.0714285714285714,
-        ),
-        textHeightBehavior: TextHeightBehavior(applyHeightToFirstAscent: false),
-        textAlign: TextAlign.center,
-        softWrap: false,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "${document.name}",
+            style: TextStyle(
+              fontFamily: 'Apple SD Gothic Neo',
+              fontSize: 23,
+              color: Color(0xffffffff),
+              fontWeight: FontWeight.w500,
+              height: 1.0714285714285714,
+            ),
+            textHeightBehavior:
+                TextHeightBehavior(applyHeightToFirstAscent: false),
+            textAlign: TextAlign.center,
+            softWrap: false,
+          ),
+          SizedBox(
+            height: 4,
+          ),
+          Text(
+            "Section: ${document.section}",
+            style: TextStyle(
+              fontFamily: 'Apple SD Gothic Neo',
+              fontSize: 12,
+              color: Color(0xffffffff),
+              fontWeight: FontWeight.w500,
+              height: 1.0714285714285714,
+            ),
+            textHeightBehavior:
+                TextHeightBehavior(applyHeightToFirstAscent: false),
+            textAlign: TextAlign.center,
+            softWrap: false,
+          ),
+          if(document.description!=null)
+          TextButton(
+            style: ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.all(0),)),
+            onPressed: (){
+             try{
+               launch("${document.description}");
+             }catch(e){
+               print(e);
+              }
+            },
+            child: Text(
+              "${document.description}",
+              style: TextStyle(
+                fontFamily: 'Apple SD Gothic Neo',
+                fontSize: 12,
+                color: Color(0xffffffff),
+                fontWeight: FontWeight.w500,
+                height: 1.0714285714285714,
+              ),
+              textHeightBehavior:
+              TextHeightBehavior(applyHeightToFirstAscent: false),
+              textAlign: TextAlign.center,
+              softWrap: false,
+            ),
+          ),
+        ],
       ),
     );
   }
