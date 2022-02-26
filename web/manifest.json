@@ -1,6 +1,6 @@
 {
-    "name": "edvance",
-    "short_name": "edvance",
+    "name": "classroom",
+    "short_name": "classroom",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

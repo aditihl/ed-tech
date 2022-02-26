@@ -1,30 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.edvance.edvance">
-    <permission
-        android:name="android.permission.NETWORK_SETTINGS"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    <uses-feature android:name="android.hardware.wifi" />
-
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-<!--    <uses-permission-->
-<!--        android:name="android.permission.WRITE_SETTINGS"-->
-<!--        tools:ignore="ProtectedPermissions" />-->
+    package="com.edvance">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="edvance"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Classroom"
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

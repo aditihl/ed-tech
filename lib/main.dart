@@ -1,21 +1,27 @@
+import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:classroom/domain/auth/user_model.dart';
+import 'package:classroom/injection.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:googleapis_auth/auth_io.dart';
-import 'package:googleapis/calendar/v3.dart' as cal;
-import 'package:edvance/secret.dart';
-import 'package:edvance/calendar_client.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:hive/hive.dart';
+import 'package:injectable/injectable.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
-import 'app.dart';
+import 'core/strings.dart';
+import 'presentation/core/app_widget.dart';
 
-void main() async{
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  bool isAuth=(FirebaseAuth.instance.currentUser!=null);
-  runApp( MyApp(isAuth:isAuth));
+
+  final Directory directory =
+      await path_provider.getApplicationDocumentsDirectory();
+  Hive.init(directory.path);
+  Hive.registerAdapter(UserModelAdapter());
+  await Hive.openBox<UserModel>(HiveBoxNames.user);
+  configureInjection(Environment.prod);
+
+  runApp(Phoenix(child: AppWidget()));
 }
-
-
-
