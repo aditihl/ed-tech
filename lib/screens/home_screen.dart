@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edvance/screens/create_class.dart';
 import 'package:edvance/screens/login_screen.dart';
+import 'package:edvance/screens/student.dart';
 import 'package:edvance/screens/teacher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -36,9 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>TeacherHome()));
           },),
           ElevatedButton(child: Text('Insert'),onPressed: (){
-            DateTime startTime=DateTime.now();
-            DateTime endTime=startTime.add(Duration(hours: 1));
-            insert(title: "Event", description: "My Event",startTime: startTime,endTime:endTime);
+            Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>StudentHome()));
           },),
           ElevatedButton(onPressed: ()async {
             GoogleSignInAccount? acc=await GoogleSignIn().signOut();

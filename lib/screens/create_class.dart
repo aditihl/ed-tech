@@ -21,6 +21,28 @@ class CreateClass extends StatefulWidget {
 
 class _CreateClassState extends State<CreateClass> {
   Map<String,String>? event;
+  TextEditingController _className=TextEditingController();
+  TextEditingController _classSection=TextEditingController();
+   GoogleSignInAccount? googleUser;
+  @override
+  void initState() {
+    createGoogle();
+    super.initState();
+  }
+  createGoogle()async {
+    googleUser = await GoogleSignIn(
+      scopes: [
+        ClassroomApi.classroomCoursesScope,
+        ClassroomApi.classroomCoursesReadonlyScope,
+        ClassroomApi.classroomRostersScope,
+        CalendarApi.calendarEventsScope,
+        CalendarApi.calendarScope,
+        ClassroomApi.classroomRostersReadonlyScope,
+        ClassroomApi.classroomProfileEmailsScope,
+
+      ],
+    ).signIn();
+  }
   @override
   Widget build(BuildContext context)
   {
@@ -50,30 +72,25 @@ class _CreateClassState extends State<CreateClass> {
             ),
             child: Column(
               children: [
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () async{
-                    DateTime startTime=DateTime.now();
-                    DateTime endTime=startTime.add(Duration(hours: 1));
-                    event=await createMeetLink(title: "Event", description: "My Event",startTime: startTime,endTime:endTime);
-
-                  },
-                  color: Theme.of(context).primaryColor,
-                ),
                 TextField(
+                  controller: _className,
                   decoration: InputDecoration(labelText: 'Enter Class Name'),
                 ),
                 TextField(
+                  controller: _classSection,
                   decoration: InputDecoration(labelText: 'Enter Section'),
                 ),
-                TextField(
-                  decoration: InputDecoration(labelText: 'Enter Subject'),
-                ),
+
                 ElevatedButton(
                   child: Text('Continue'),
-                  onPressed: () {
+                  onPressed: () async{
+
+                    DateTime startTime=DateTime.now();
+                    DateTime endTime=startTime.add(Duration(hours: 1));
+                    event=await createMeetLink(title: _className.text, description: _classSection.text,startTime: startTime,endTime:endTime);
+
                     createClass(
-                        title: "Class-2", section: "A", subject: "Mathematics");
+                        title: _className.text, section: _classSection.text);
                   },
                 ),
               ],
@@ -92,7 +109,6 @@ class _CreateClassState extends State<CreateClass> {
   }) async {
     List<EventAttendee> attendeeEmailList=[];
     attendeeEmailList.add(EventAttendee(email: "aditi4jan@gmail.com"));
-    attendeeEmailList.add(EventAttendee(email: "mittalpiyush143@gmail.com"));
     Map<String, String> eventData={};
     String calendarId = "primary";
     Event event = Event();
@@ -121,12 +137,7 @@ class _CreateClassState extends State<CreateClass> {
 
     try {
 
-      final GoogleSignInAccount? googleUser = await GoogleSignIn(
-        scopes: [
-         CalendarApi.calendarEventsScope,
-          CalendarApi.calendarScope
-        ],
-      ).signIn();
+
       final GoogleAPIClient httpClient =
       GoogleAPIClient(await googleUser!.authHeaders);
 
@@ -147,10 +158,6 @@ class _CreateClassState extends State<CreateClass> {
           print("Unable to add event to Google Calendar");
         }
       });
-
-      // final calendarApi=CalendarApi(httpClient);
-      // final googleAPI.CalendarApi calendarAPI = googleAPI.CalendarApi(httpClient);
-
     } catch (e) {
       print('Error creating event $e');
     }
@@ -160,27 +167,25 @@ class _CreateClassState extends State<CreateClass> {
   Future<Map<String, String>> createClass({
     required String title,
     required String section,
-    required String subject,
-    // List<EventAttendee> attendeeEmailList,
   }) async {
     Map<String, String> cousre = {};
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn(
-        scopes: [
-          ClassroomApi.classroomCoursesScope,
-          ClassroomApi.classroomCoursesReadonlyScope,
-          ClassroomApi.classroomRostersScope,
-          ClassroomApi.classroomRostersReadonlyScope,
-        ],
-      ).signIn();
+
       final GoogleAPIClient httpClient =
           GoogleAPIClient(await googleUser!.authHeaders);
 
       ClassroomApi calendarApi = ClassroomApi(httpClient);
       await calendarApi.courses
-          .create(Course(name: title, section: section, ownerId: googleUser.id,description: event!['link']))
+          .create(Course(name: title, section: section, ownerId: googleUser!.id,description: event!['link']))
           .then((value) {
-        print(value);
+        print(value.id);
+if(value.id!=null) {
+  calendarApi.courses.students.create(
+      Student(courseId: value.id, userId: "hab.aditi.modi@gmail.com"),
+      "${value.id}");
+  calendarApi.invitations.list().then((value) => print(value
+  ));
+}
         // }
       });
 

@@ -1,18 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edvance/screens/create_class.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/classroom/v1.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class TeacherHome extends StatefulWidget {
-  const TeacherHome({Key? key}) : super(key: key);
+class StudentHome extends StatefulWidget {
+  const StudentHome({Key? key}) : super(key: key);
 
   @override
-  _TeacherHomeState createState() => _TeacherHomeState();
+  State<StudentHome> createState() => _StudentHomeState();
 }
 
-class _TeacherHomeState extends State<TeacherHome> {
+class _StudentHomeState extends State<StudentHome> {
   List<Course> course = [];
 
   @override
@@ -28,7 +27,6 @@ class _TeacherHomeState extends State<TeacherHome> {
         ClassroomApi.classroomCoursesReadonlyScope,
         ClassroomApi.classroomRostersScope,
         ClassroomApi.classroomRostersReadonlyScope,
-
       ],
     ).signIn();
     final GoogleAPIClient httpClient =
@@ -41,6 +39,7 @@ class _TeacherHomeState extends State<TeacherHome> {
       setState(() {});
       print(value);
       print(value.courses);
+
     });
   }
 
@@ -68,22 +67,13 @@ class _TeacherHomeState extends State<TeacherHome> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30)),
+                topLeft: Radius.circular(30), topRight: Radius.circular(30)),
           ),
           child: ListView(
             children: course.map((Course document) {
               return snapshotList(document);
             }).toList(),
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (builder) => CreateClass()));
-          },
-          backgroundColor: Theme.of(context).primaryColor,
         ),
       ),
     );
@@ -137,31 +127,34 @@ class _TeacherHomeState extends State<TeacherHome> {
             textAlign: TextAlign.center,
             softWrap: false,
           ),
-          if(document.description!=null)
-          TextButton(
-            style: ButtonStyle(padding: MaterialStateProperty.all(EdgeInsets.all(0),)),
-            onPressed: (){
-             try{
-               launch("${document.description}");
-             }catch(e){
-               print(e);
-              }
-            },
-            child: Text(
-              "${document.description}",
-              style: TextStyle(
-                fontFamily: 'Apple SD Gothic Neo',
-                fontSize: 12,
-                color: Color(0xffffffff),
-                fontWeight: FontWeight.w500,
-                height: 1.0714285714285714,
+          if (document.description != null)
+            TextButton(
+              style: ButtonStyle(
+                  padding: MaterialStateProperty.all(
+                EdgeInsets.all(0),
+              )),
+              onPressed: () {
+                try {
+                  launch("${document.description}");
+                } catch (e) {
+                  print(e);
+                }
+              },
+              child: Text(
+                "${document.description}",
+                style: TextStyle(
+                  fontFamily: 'Apple SD Gothic Neo',
+                  fontSize: 12,
+                  color: Color(0xffffffff),
+                  fontWeight: FontWeight.w500,
+                  height: 1.0714285714285714,
+                ),
+                textHeightBehavior:
+                    TextHeightBehavior(applyHeightToFirstAscent: false),
+                textAlign: TextAlign.center,
+                softWrap: false,
               ),
-              textHeightBehavior:
-              TextHeightBehavior(applyHeightToFirstAscent: false),
-              textAlign: TextAlign.center,
-              softWrap: false,
             ),
-          ),
         ],
       ),
     );
