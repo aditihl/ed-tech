@@ -39,6 +39,7 @@ class _CreateClassState extends State<CreateClass> {
         CalendarApi.calendarScope,
         ClassroomApi.classroomRostersReadonlyScope,
         ClassroomApi.classroomProfileEmailsScope,
+        ClassroomApi.classroomProfilePhotosScope,
 
       ],
     ).signIn();
@@ -180,11 +181,11 @@ class _CreateClassState extends State<CreateClass> {
           .then((value) {
         print(value.id);
 if(value.id!=null) {
-  calendarApi.courses.students.create(
-      Student(courseId: value.id, userId: "hab.aditi.modi@gmail.com"),
-      "${value.id}");
-  calendarApi.invitations.list().then((value) => print(value
-  ));
+
+
+
+  // calendarApi.invitations.list().then((value) => print(value
+  // ));
 }
         // }
       });

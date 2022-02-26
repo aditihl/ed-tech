@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edvance/app_header.dart';
 import 'package:edvance/screens/home_screen.dart';
+import 'package:edvance/screens/student.dart';
+import 'package:edvance/screens/teacher.dart';
 import 'package:edvance/session_manager.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -109,11 +111,13 @@ SizedBox(height: 50,),
       'email': _user!.email, //
       'role': role // 42
     });
-    // SessionManager().setUserRole(role);
+    SessionManager().setUserRole(role);
     redirectToHomeScreen();
   }
-  void redirectToHomeScreen() {
+
+  void redirectToHomeScreen() async{
+
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (buil) => HomeScreen()), (route) => false);
+        MaterialPageRoute(builder: (buil) => role=="Student"?const StudentHome(): const TeacherHome()), (route) => false);
   }
 }

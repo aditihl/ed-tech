@@ -1,13 +1,16 @@
 
 import 'package:edvance/screens/home_screen.dart';
 import 'package:edvance/screens/login_screen.dart';
+import 'package:edvance/screens/student.dart';
+import 'package:edvance/screens/teacher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class MyApp extends StatelessWidget {
   bool isAuth;
-   MyApp({Key? key,this.isAuth=false}) : super(key: key);
+  String role;
+   MyApp({Key? key,this.isAuth=false, this.role="Student"}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -25,7 +28,7 @@ class MyApp extends StatelessWidget {
         // primarySwatch: Color(0xffcd1b5a),
       ),
       debugShowCheckedModeBanner: false,
-      home:!isAuth? LoginScreen():const HomeScreen(),
+      home:!isAuth? LoginScreen():role=="Student"?const StudentHome(): const TeacherHome(),
       // home:LoginnScreen()
     );
   }

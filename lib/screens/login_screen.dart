@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:edvance/screens/home_screen.dart';
 import 'package:edvance/screens/role_screen.dart';
+import 'package:edvance/screens/student.dart';
+import 'package:edvance/screens/teacher.dart';
 import 'package:edvance/session_manager.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -144,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mapData.containsKey("role") &&
               mapData['role'] != null) {
             // if (!mounted) {
-              // SessionManager().setUserRole( mapData['role']);
+              SessionManager().setUserRole( mapData['role']);
               redirectToHomeScreen();
             // }
           } else {
@@ -166,9 +168,11 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (buil) => RoleScreen()), (route) => false);
   }
 
-  void redirectToHomeScreen() {
+  void redirectToHomeScreen() async{
+    String role=await SessionManager().getUserRole();
+    print(role);
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (buil) => HomeScreen()), (route) => false);
+        MaterialPageRoute(builder: (buil) => role=="Student"?const StudentHome(): const TeacherHome()), (route) => false);
   }
 
   Future<UserCredential> signInWithGoogle() async {

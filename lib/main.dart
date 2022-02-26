@@ -1,4 +1,5 @@
 
+import 'package:edvance/session_manager.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,8 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   bool isAuth=(FirebaseAuth.instance.currentUser!=null);
-  runApp( MyApp(isAuth:isAuth));
+  String role=await SessionManager().getUserRole();
+  runApp( MyApp(isAuth:isAuth,role:role));
 }
 
 
