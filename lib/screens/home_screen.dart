@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:edvance/screens/create_class.dart';
 import 'package:edvance/screens/login_screen.dart';
+import 'package:edvance/screens/teacher.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:edvance/event_info.dart';
 import 'package:googleapis/classroom/v1.dart';
@@ -26,34 +29,28 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Column(
-      children: [
-        ElevatedButton(child: Text('Create Class'),onPressed: ()async{
-          DocumentReference d=await FirebaseFirestore.instance.collection("classroom").add({
-            'class_id':'RKxZTmea7C29OedWfSH0',
-            "section":'A',
-            'start_date':DateTime.now(),
-            "end_date":DateTime.now().add(Duration(hours: 1)),
-            "meetLink":"",
-            "Days":["Monday"],
-          });
-          //add Sections
-          
-        },),
-        ElevatedButton(child: Text('Insert'),onPressed: (){
-          DateTime startTime=DateTime.now();
-          DateTime endTime=startTime.add(Duration(hours: 1));
-          insert(title: "Event", description: "My Event",startTime: startTime,endTime:endTime);
-        },),
-        ElevatedButton(onPressed: ()async {
-          GoogleSignInAccount? acc=await GoogleSignIn().signOut();
-          print(acc);
-          if(acc==null){
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (builder)=>LoginScreen()), (route) => false);
-          }
-        }, child: Text('Logout'))
-      ],
-    ),),);
+    return SafeArea(
+      child: Scaffold(body: Center(child: Column(
+        children: [
+          ElevatedButton(child: Text('Create Class'),onPressed: ()async{
+            Navigator.of(context).push(MaterialPageRoute(builder: (builder)=>TeacherHome()));
+          },),
+          ElevatedButton(child: Text('Insert'),onPressed: (){
+            DateTime startTime=DateTime.now();
+            DateTime endTime=startTime.add(Duration(hours: 1));
+            insert(title: "Event", description: "My Event",startTime: startTime,endTime:endTime);
+          },),
+          ElevatedButton(onPressed: ()async {
+            GoogleSignInAccount? acc=await GoogleSignIn().signOut();
+            await FirebaseAuth.instance.signOut();
+            print(acc);
+            if(acc==null){
+              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (builder)=>LoginScreen()), (route) => false);
+            }
+          }, child: Text('Logout'))
+        ],
+      ),),),
+    );
   }
 
   Future<Map<String, String>> insertClassRoom({
@@ -78,22 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
         await calendarApi.courses.create(Course())
             .then((value) {
 
-          // print("Event Status: ${value.status}");
-          // if (value.status == "confirmed") {
-          //   String  joiningLink = "https://meet.google.com/${value.conferenceData?.conferenceId}";
-          //   String eventId;
-          //   eventId = value.id!;
-          //
-          //   eventData = {'id': eventId, 'link': joiningLink};
-          //   print('Event added to Google Calendar');
-          // } else {
-          //   print("Unable to add event to Google Calendar");
           // }
         });
       });
-
-      // final calendarApi=CalendarApi(httpClient);
-      // final googleAPI.CalendarApi calendarAPI = googleAPI.CalendarApi(httpClient);
 
     } catch (e) {
       print('Error creating event $e');

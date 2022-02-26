@@ -1,3 +1,4 @@
+
 import 'package:edvance/screens/home_screen.dart';
 import 'package:edvance/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,9 +18,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: Color(0xff541452),
+        // primarySwatch: Color(0xffcd1b5a),
       ),
-      home:!isAuth?const LoginScreen():const HomeScreen(),
+      debugShowCheckedModeBanner: false,
+      home:!isAuth? LoginScreen():const HomeScreen(),
+      // home:LoginnScreen()
     );
   }
 }
